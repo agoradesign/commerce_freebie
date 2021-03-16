@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_freebie.commerce_freebie_type.default
+id: commerce_freebie.default.cart
+targetEntityType: commerce_freebie
+bundle: default
+mode: cart
+content:
+  purchasable_entity:
+    type: entity_reference_entity_view
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link: false
+      view_mode: cart
+    third_party_settings: {  }
+hidden:
+  langcode: {  }

@@ -1,0 +1,14 @@
+services:
+  commerce_freebie.freebie_service:
+    class: Drupal\commerce_freebie\FreebieService
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+
+  commerce_freebie.freebie_order_processor:
+    class: Drupal\commerce_freebie\FreebieOrderProcessor
+    arguments:
+      - '@entity_type.manager'
+      - '@commerce_freebie.freebie_service'
+    tags:
+      - { name: commerce_order.order_processor, priority: 90 }

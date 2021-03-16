@@ -1,0 +1,11 @@
+entity.commerce_freebie.collection:
+  title: Freebies
+  route_name: 'entity.commerce_freebie.collection'
+  parent: 'commerce.admin_commerce'
+  description: 'Manage your freebies.'
+
+entity.commerce_freebie_type.collection:
+  title: 'Freebie types'
+  route_name: 'entity.commerce_freebie_type.collection'
+  parent: 'commerce_product.configuration'
+  description: 'Manage fields, form and display settings for your freebies.'

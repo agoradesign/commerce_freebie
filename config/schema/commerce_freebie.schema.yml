@@ -1,0 +1,21 @@
+commerce_freebie.settings:
+  type: config_object
+  label: 'Commerce freebie settings'
+  mapping:
+    order_subtotal_threshold:
+      type: integer
+      label: 'Minimal order subtotal to add the freebie'
+    selection_number:
+      type: integer
+      label: 'Maximum number of freebies to choose'
+
+commerce_freebie.commerce_freebie_type.*:
+  type: commerce_config_entity_bundle
+  label: 'Freebie type'
+  mapping:
+    purchasableEntityType:
+      type: string
+      label: 'Purchasable entity type'
+    orderItemType:
+      type: string
+      label: 'Order item type'

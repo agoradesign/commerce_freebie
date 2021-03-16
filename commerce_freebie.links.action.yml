@@ -1,0 +1,11 @@
+entity.commerce_freebie.add_page:
+  route_name: entity.commerce_freebie.add_page
+  title: 'Add freebie'
+  appears_on:
+    - entity.commerce_freebie.collection
+
+entity.commerce_freebie_type.add_form:
+  route_name: entity.commerce_freebie_type.add_form
+  title: 'Add freebie type'
+  appears_on:
+    - entity.commerce_freebie_type.collection

@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - commerce_freebie
+label: Freebie
+id: freebie
+purchasableEntityType: commerce_freebie
+orderType: default
+traits: {  }
+locked: false

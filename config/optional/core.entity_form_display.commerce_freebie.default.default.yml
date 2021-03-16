@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - commerce_freebie.commerce_freebie_type.default
+  enforced:
+    module:
+      - commerce_freebie
+  module:
+    - commerce
+    - weight
+id: commerce_freebie.default.default
+targetEntityType: commerce_freebie
+bundle: default
+mode: default
+content:
+  priority:
+    type: weight_selector
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  purchasable_entity:
+    type: commerce_entity_select
+    weight: 1
+    settings:
+      autocomplete_threshold: 7
+      autocomplete_size: 60
+      autocomplete_placeholder: ''
+      hide_single_entity: false
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 3
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true

@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Template for the freebie selection form.
+ *
+ * Available variables:
+ * - form: The form. Contains the available freebies in form.freebies,
+ *         each containing label, rendered_freebie, select_button.
+ *         For example: form.freebies.0.label
+ *
+ * @ingroup themeable
+ */
+#}
+{% if form.freebies|length %}
+  <div class="freebie-selection-form">
+    <h3 class="freebie-selection-form__title">{{ 'Select your freebie'|t }}</h3>
+    <table class="freebie-selection-form__choices">
+      <tbody>
+      {% for key, freebie in form.freebies if key|first != '#' %}
+        <tr>
+          <td> {{ freebie.label }} </td>
+          <td> {{ freebie.select_button }} </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+{{ form|without('freebies') }}

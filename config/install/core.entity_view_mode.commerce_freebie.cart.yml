@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - commerce_freebie
+  module:
+    - commerce_freebie
+id: commerce_freebie.cart
+label: Cart
+targetEntityType: commerce_freebie
+cache: true

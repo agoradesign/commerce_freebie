@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ *
+ * Default freebie template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - content: The rendered product fields.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ *
+ * @ingroup themeable
+ */
+#}
+<article{{ attributes }}>
+  {{- content -}}
+</article>
