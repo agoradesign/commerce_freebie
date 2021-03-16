@@ -1,0 +1,13 @@
+{
+    "name": "agoradesign/commerce_freebie",
+    "type": "drupal-module",
+    "description": "Adds freebie feature to Drupal Commerce.",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://github.com/agoradesign/commerce_freebie",
+    "require": {
+        "drupal/commerce": "~2.24",
+        "drupal/core": "^9.1",
+        "drupal/weight": "~3.3"
+    },
+    "minimum-stability": "dev"
+}
