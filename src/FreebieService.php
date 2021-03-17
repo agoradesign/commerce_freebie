@@ -78,6 +78,28 @@ class FreebieService implements FreebieServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function calcDifferenceToGetFreebie(OrderInterface $order) {
+    $subtotal_threshold = (int) $this->config->get('order_subtotal_threshold');
+    // A negative threshold means no freebies at all.
+    if ($subtotal_threshold < 0) {
+      return NULL;
+    }
+
+    $total = $this->getOrderTotalWithoutShipping($order);
+    if (empty($total)) {
+      return NULL;
+    }
+
+    $threshold_price = new Price($subtotal_threshold, $total->getCurrencyCode());
+    if ($total->greaterThanOrEqual($threshold_price)) {
+      return new Price('0', $total->getCurrencyCode());
+    }
+    return $threshold_price->subtract($total);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getFreebieItems(OrderInterface $order) {
     $freebie_items = [];
     foreach ($order->getItems() as $item) {

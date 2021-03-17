@@ -21,6 +21,21 @@ interface FreebieServiceInterface {
   public function appliesForFreebie(OrderInterface $order);
 
   /**
+   * Calculates the price difference needed to get a free for the given order.
+   *
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   The order entity.
+   *
+   * @return \Drupal\commerce_price\Price|null
+   *   The needed amount (as price object) for the given cart (order entity) to
+   *   meet the criteria to get a freebie. A zero-amount price is returned, if
+   *   the criteria is already met. NULL is returned, if freebie threshold is
+   *   deactivated at the moment, or the order does not have a total price set,
+   *   yet, hence no currency is available.
+   */
+  public function calcDifferenceToGetFreebie(OrderInterface $order);
+
+  /**
    * Extracts the freebie order items of the given order.
    *
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
