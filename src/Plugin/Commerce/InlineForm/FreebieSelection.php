@@ -105,6 +105,10 @@ class FreebieSelection extends InlineFormBase {
     }
     assert($order instanceof OrderInterface);
 
+    if (!$this->freebieService->appliesForFreebie($order)) {
+      return $inline_form;
+    }
+
     $inline_form = [
       '#tree' => TRUE,
       '#theme' => 'commerce_freebie_selection_form',
