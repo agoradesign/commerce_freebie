@@ -1,9 +1,9 @@
-name: 'Freebie'
+name: Freebie
 type: module
 description: 'Adds freebie feature to Drupal Commerce.'
 core_version_requirement: ^8.8.3 || ^9
-package: klippshop
-version: '1.0.2'
+package: 'Commerce (contrib)'
+version: '1.0.3'
 
 dependencies:
   - commerce:commerce_order
