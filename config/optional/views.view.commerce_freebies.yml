@@ -3,6 +3,7 @@ status: true
 dependencies:
   module:
     - commerce_freebie
+    - user
     - weight
 id: commerce_freebies
 label: Freebies
@@ -19,8 +20,9 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access commerce_freebie overview'
       cache:
         type: tag
         options: {  }
