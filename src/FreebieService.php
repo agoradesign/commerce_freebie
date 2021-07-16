@@ -141,10 +141,21 @@ class FreebieService implements FreebieServiceInterface {
 
     // $order->getSubtotalPrice() does not consider promotion. So we need to
     // calculate the subtotal without shipping by ourselves.
-    $shipping = $order->getAdjustments(['shipping']);
+    // We load both shipping and shipping promotions adjustments. As the latter
+    // ones have negative amounts, we can just add up all of them.
+    $shipping = $order->getAdjustments(['shipping', 'shipping_promotion']);
     if (!empty($shipping)) {
+      $shipping_costs = NULL;
       foreach ($shipping as $shipping_adjustment) {
-        $total_price = $total_price->subtract($shipping_adjustment->getAmount());
+        if (is_null($shipping_costs)) {
+          $shipping_costs = $shipping_adjustment->getAmount();
+        }
+        else {
+          $shipping_costs = $shipping_costs->add($shipping_adjustment->getAmount());
+        }
+      }
+      if ($shipping_costs && $shipping_costs->isPositive()) {
+        $total_price = $total_price->subtract($shipping_costs);
       }
     }
     return $total_price;
