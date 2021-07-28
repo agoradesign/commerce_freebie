@@ -56,7 +56,7 @@ class FreebieOrderProcessor implements OrderProcessorInterface {
       $candidates = $this->freebieService->getActiveFreebies();
       if (!empty($existing_freebie_items)) {
         $existing_item = array_shift($existing_freebie_items);
-        $existing_freebie_id = (int) $existing_item->getPurchasedEntity()->id();
+        $existing_freebie_id = $existing_item->getPurchasedEntity() ? (int) $existing_item->getPurchasedEntity()->id() : 0;
 
         // If for whatever reason we have more than one item, clear the rest.
         if (!empty($existing_freebie_items)) {

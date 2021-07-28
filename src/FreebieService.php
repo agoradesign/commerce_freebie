@@ -103,7 +103,7 @@ class FreebieService implements FreebieServiceInterface {
   public function getFreebieItems(OrderInterface $order) {
     $freebie_items = [];
     foreach ($order->getItems() as $item) {
-      if ($item->hasPurchasedEntity() && $item->getPurchasedEntity() instanceof FreebieInterface) {
+      if ($item->hasPurchasedEntity() && (($item->getPurchasedEntity() instanceof FreebieInterface) || $item->bundle() === 'freebie')) {
         $freebie_items[$item->id()] = $item;
       }
     }
