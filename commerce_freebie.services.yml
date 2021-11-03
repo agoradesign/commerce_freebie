@@ -4,6 +4,7 @@ services:
     arguments:
       - '@config.factory'
       - '@entity_type.manager'
+      - '@event_dispatcher'
 
   commerce_freebie.freebie_order_processor:
     class: Drupal\commerce_freebie\FreebieOrderProcessor

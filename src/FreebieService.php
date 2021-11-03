@@ -3,10 +3,12 @@
 namespace Drupal\commerce_freebie;
 
 use Drupal\commerce_freebie\Entity\FreebieInterface;
+use Drupal\commerce_freebie\Event\OrderTotalPriceEvent;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_price\Price;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Default freebie service implementation.
@@ -19,6 +21,13 @@ class FreebieService implements FreebieServiceInterface {
    * @var \Drupal\Core\Config\Config
    */
   protected $config;
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
 
   /**
    * The freebie storage.
@@ -48,9 +57,12 @@ class FreebieService implements FreebieServiceInterface {
    *   The config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher) {
     $this->config = $config_factory->get('commerce_freebie.settings');
+    $this->eventDispatcher = $event_dispatcher;
     $this->freebieStorage = $entity_type_manager->getStorage('commerce_freebie');
     $this->orderItemStorage = $entity_type_manager->getStorage('commerce_order_item');
     $this->activeFreebies = NULL;
@@ -134,7 +146,9 @@ class FreebieService implements FreebieServiceInterface {
    *   if the order total is also NULL.
    */
   protected function getOrderTotalWithoutShipping(OrderInterface $order) {
-    $total_price = $order->getTotalPrice();
+    $event = new OrderTotalPriceEvent($order);
+    $this->eventDispatcher->dispatch($event);
+    $total_price = $event->getOrderTotal();
     if (empty($total_price)) {
       return NULL;
     }
