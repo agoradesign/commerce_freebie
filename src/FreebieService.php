@@ -3,6 +3,7 @@
 namespace Drupal\commerce_freebie;
 
 use Drupal\commerce_freebie\Entity\FreebieInterface;
+use Drupal\commerce_freebie\Event\AppliesForFreebieEvent;
 use Drupal\commerce_freebie\Event\OrderTotalPriceEvent;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_price\Price;
@@ -80,6 +81,12 @@ class FreebieService implements FreebieServiceInterface {
 
     $total = $this->getOrderTotalWithoutShipping($order);
     if (empty($total)) {
+      return FALSE;
+    }
+
+    $event = new AppliesForFreebieEvent($order);
+    $this->eventDispatcher->dispatch($event);
+    if ($event->shouldNeverApply()) {
       return FALSE;
     }
 
