@@ -1,7 +1,7 @@
 name: 'Commerce Freebie'
 type: module
 description: 'Adds freebie feature to Drupal Commerce.'
-core_version_requirement: ^8.8.3 || ^9
+core_version_requirement: ^9
 package: 'Commerce (contrib)'
 version: '1.0.9'
 

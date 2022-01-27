@@ -6,7 +6,7 @@
     "homepage": "https://github.com/agoradesign/commerce_freebie",
     "require": {
         "drupal/commerce": "~2.24",
-        "drupal/core": "^9.1",
+        "drupal/core": "^9",
         "drupal/weight": "~3.3"
     },
     "minimum-stability": "dev"
