@@ -5,11 +5,13 @@ namespace Drupal\commerce_freebie\Entity;
 use Drupal\commerce\Entity\CommerceContentEntityBase;
 use Drupal\commerce\EntityOwnerTrait;
 use Drupal\commerce_price\Price;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Defines the freebie entity class.
@@ -117,6 +119,42 @@ class Freebie extends CommerceContentEntityBase implements FreebieInterface {
   /**
    * {@inheritdoc}
    */
+  public function getStartDate(string $store_timezone = 'UTC'): DrupalDateTime {
+    return new DrupalDateTime($this->get('start_date')->value, $store_timezone);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStartDate(DrupalDateTime $start_date) {
+    $this->get('start_date')->value = $start_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEndDate(string $store_timezone = 'UTC'): ?DrupalDateTime {
+    if (!$this->get('end_date')->isEmpty()) {
+      return new DrupalDateTime($this->get('end_date')->value, $store_timezone);
+    }
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setEndDate(DrupalDateTime $end_date = NULL) {
+    $this->get('end_date')->value = NULL;
+    if ($end_date) {
+      $this->get('end_date')->value = $end_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCreatedTime() {
     return $this->get('created')->value;
   }
@@ -205,6 +243,28 @@ class Freebie extends CommerceContentEntityBase implements FreebieInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['start_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('Start date'))
+      ->setRequired(TRUE)
+      ->setSetting('datetime_type', 'datetime')
+      ->setDefaultValueCallback('Drupal\commerce_freebie\Entity\Freebie::getDefaultStartDate')
+      ->setDisplayOptions('form', [
+        'type' => 'commerce_store_datetime',
+        'weight' => 5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['end_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('End date'))
+      ->setRequired(FALSE)
+      ->setSetting('datetime_type', 'datetime')
+      ->setSetting('datetime_optional_label', t('Provide an end date'))
+      ->setDisplayOptions('form', [
+        'type' => 'commerce_store_datetime',
+        'weight' => 6,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
     $fields['status']
       ->setLabel(t('Published'))
       ->setDisplayOptions('form', [
@@ -251,6 +311,19 @@ class Freebie extends CommerceContentEntityBase implements FreebieInterface {
     }
 
     return $fields;
+  }
+
+  /**
+   * Default value callback for 'start_date' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return string
+   *   The default value (date string).
+   */
+  public static function getDefaultStartDate(): string {
+    $timestamp = \Drupal::time()->getRequestTime();
+    return date(DateTimeItemInterface::DATETIME_STORAGE_FORMAT, $timestamp);
   }
 
 }

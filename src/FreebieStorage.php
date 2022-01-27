@@ -3,8 +3,9 @@
 namespace Drupal\commerce_freebie;
 
 use Drupal\commerce\CommerceContentEntityStorage;
-use Drupal\commerce_freebie\Event\FreebieEvents;
 use Drupal\commerce_freebie\Event\FreebieSelectionEvent;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Defines the freebie storage.
@@ -14,11 +15,22 @@ class FreebieStorage extends CommerceContentEntityStorage implements FreebieStor
   /**
    * {@inheritdoc}
    */
-  public function getActiveFreebies(int $max_results = 3) {
+  public function getActiveFreebies(int $max_results = 3, ?int $timestamp = NULL): array {
     $freebies = [];
+
+    if (is_null($timestamp)) {
+      $timestamp = \Drupal::time()->getRequestTime();
+    }
+    $date = DrupalDateTime::createFromTimestamp($timestamp)->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+
     $entity_query = $this->getQuery();
     $entity_query->accessCheck(FALSE);
     $entity_query->condition('status', 1);
+    $entity_query->condition('start_date', $date, '<=');
+    $end_date_or_condition = $entity_query->orConditionGroup()
+      ->condition('end_date', $date, '>')
+      ->notExists('end_date');
+    $entity_query->condition($end_date_or_condition);
     $entity_query->sort('priority');
     $entity_query->sort('freebie_id');
     $result = $entity_query->execute();

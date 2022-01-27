@@ -20,10 +20,13 @@ interface FreebieStorageInterface extends ContentEntityStorageInterface, SqlEnti
    *
    * @param int $max_results
    *   The number of maximum results returned. Defaults to 3.
+   * @param int|null $timestamp
+   *   The timestamp. If set to NULL, the current timestamp will be taken.
+   *   Defaults to NULL.
    *
    * @return \Drupal\commerce_freebie\Entity\FreebieInterface[]
    *   A list of active freebies, ready sorted.
    */
-  public function getActiveFreebies(int $max_results = 3);
+  public function getActiveFreebies(int $max_results = 3, ?int $timestamp = NULL): array;
 
 }
