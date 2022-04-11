@@ -3,7 +3,7 @@ type: module
 description: 'Adds freebie feature to Drupal Commerce.'
 core_version_requirement: ^9 || ^10
 package: 'Commerce (contrib)'
-version: '1.1.0'
+version: '1.1.1'
 
 dependencies:
   - commerce:commerce_order

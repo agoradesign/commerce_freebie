@@ -64,11 +64,16 @@ class FreebieOrderProcessor implements OrderProcessorInterface {
         }
 
         $target_freebie = $this->selectFreebieForOrder($order, $candidates);
-        $target_freebie_id = (int) $target_freebie->id();
-        if ($existing_freebie_id !== $target_freebie_id || !in_array($existing_freebie_id, array_keys($candidates))) {
-          // We have to replace the freebie in the cart.
+        if (!empty($target_freebie)) {
+          $target_freebie_id = (int) $target_freebie->id();
+          if ($existing_freebie_id !== $target_freebie_id || !in_array($existing_freebie_id, array_keys($candidates))) {
+            // We have to replace the freebie in the cart.
+            $items_to_remove[$existing_item->id()] = $existing_item;
+            $freebie_to_add = $target_freebie;
+          }
+        }
+        else {
           $items_to_remove[$existing_item->id()] = $existing_item;
-          $freebie_to_add = $target_freebie;
         }
       }
       else {
@@ -115,10 +120,13 @@ class FreebieOrderProcessor implements OrderProcessorInterface {
    * @param \Drupal\commerce_freebie\Entity\FreebieInterface[] $candidates
    *   The freebie candidates.
    *
-   * @return \Drupal\commerce_freebie\Entity\FreebieInterface
+   * @return \Drupal\commerce_freebie\Entity\FreebieInterface|null
    *   The freebie.
    */
   protected function selectFreebieForOrder(OrderInterface $order, array $candidates) {
+    if (empty($candidates)) {
+      return NULL;
+    }
     $selected_freebie_id = (int) $order->getData('selected_freebie', 0);
     return $selected_freebie_id > 0 && isset($candidates[$selected_freebie_id]) ? $candidates[$selected_freebie_id] : reset($candidates);
   }
