@@ -5,8 +5,8 @@
     "license": "GPL-2.0-or-later",
     "homepage": "https://github.com/agoradesign/commerce_freebie",
     "require": {
-        "drupal/commerce": "~2.24",
-        "drupal/core": "^9 || ^10",
+        "drupal/commerce": "~2.24 || ^3.0",
+        "drupal/core": "^10 || ^11",
         "drupal/weight": "~3.3"
     },
     "minimum-stability": "dev"
