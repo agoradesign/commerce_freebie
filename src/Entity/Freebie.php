@@ -144,7 +144,7 @@ class Freebie extends CommerceContentEntityBase implements FreebieInterface {
   /**
    * {@inheritdoc}
    */
-  public function setEndDate(DrupalDateTime $end_date = NULL) {
+  public function setEndDate(?DrupalDateTime $end_date = NULL) {
     $this->get('end_date')->value = NULL;
     if ($end_date) {
       $this->get('end_date')->value = $end_date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);

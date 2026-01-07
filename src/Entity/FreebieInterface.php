@@ -100,7 +100,7 @@ interface FreebieInterface extends PurchasableEntityInterface, EntityChangedInte
    *
    * @return $this
    */
-  public function setEndDate(DrupalDateTime $end_date = NULL);
+  public function setEndDate(?DrupalDateTime $end_date = NULL);
 
   /**
    * Gets the order item creation timestamp.
