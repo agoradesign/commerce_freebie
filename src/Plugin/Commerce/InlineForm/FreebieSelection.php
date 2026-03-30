@@ -2,22 +2,23 @@
 
 namespace Drupal\commerce_freebie\Plugin\Commerce\InlineForm;
 
+use Drupal\commerce\Attribute\CommerceInlineForm;
 use Drupal\commerce\Plugin\Commerce\InlineForm\InlineFormBase;
 use Drupal\commerce_freebie\FreebieServiceInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an inline form for choosing a different freebie.
- *
- * @CommerceInlineForm(
- *   id = "freebie_selection",
- *   label = @Translation("Freebie selection"),
- * )
  */
+#[CommerceInlineForm(
+  id: "freebie_selection",
+  label: new TranslatableMarkup("Freebie selection"),
+)]
 class FreebieSelection extends InlineFormBase {
 
   /**
@@ -25,53 +26,29 @@ class FreebieSelection extends InlineFormBase {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The freebie service.
    *
    * @var \Drupal\commerce_freebie\FreebieServiceInterface
    */
-  protected $freebieService;
-
-  /**
-   * Constructs a new FreebieSelection object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\commerce_freebie\FreebieServiceInterface $freebie_service
-   *   The freebie service.
-   */
-  public function __construct(array $configuration, string $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, FreebieServiceInterface $freebie_service) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-
-    $this->entityTypeManager = $entity_type_manager;
-    $this->freebieService = $freebie_service;
-  }
+  protected FreebieServiceInterface $freebieService;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('commerce_freebie.freebie_service')
-    );
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    $instance->freebieService = $container->get('commerce_freebie.freebie_service');
+    return $instance;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     return [
       // The order_id is passed via configuration to avoid serializing the
       // order, which is loaded from scratch in the submit handler to minimize
@@ -83,7 +60,7 @@ class FreebieSelection extends InlineFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function requiredConfiguration() {
+  protected function requiredConfiguration(): array {
     return ['order_id'];
   }
 
@@ -109,6 +86,10 @@ class FreebieSelection extends InlineFormBase {
       return $inline_form;
     }
 
+    $selected_freebie_id = (int) $order->getData('selected_freebie', 0);
+    $selected_freebie = $selected_freebie_id > 0 && isset($candidates[$selected_freebie_id]) ? $candidates[$selected_freebie_id] : reset($candidates);
+    $selected_freebie_id = $selected_freebie->id();
+
     $inline_form = [
       '#tree' => TRUE,
       '#theme' => 'commerce_freebie_selection_form',
@@ -119,6 +100,7 @@ class FreebieSelection extends InlineFormBase {
 
     foreach ($candidates as $candidate) {
       $id = $candidate->id();
+      $is_active = $id == $selected_freebie_id;
       $button_name = 'select_button_' . $id;
       $inline_form['freebies'][$id]['rendered_freebie'] = $freebie_view_builder->view($candidate);
       $inline_form['freebies'][$id]['label'] = [
@@ -144,6 +126,7 @@ class FreebieSelection extends InlineFormBase {
         // on the same level.
         '#parents' => array_merge($inline_form['#parents'], [$button_name]),
       ];
+      $inline_form['freebies'][$id]['#is_active'] = $is_active;
     }
 
     return $inline_form;
@@ -152,7 +135,7 @@ class FreebieSelection extends InlineFormBase {
   /**
    * Submit callback for the "Select freebie" button.
    */
-  public static function selectFreebie(array $form, FormStateInterface $form_state) {
+  public static function selectFreebie(array $form, FormStateInterface $form_state): void {
     $triggering_element = $form_state->getTriggeringElement();
     $parents = array_slice($triggering_element['#parents'], 0, -1);
     $inline_form = NestedArray::getValue($form, $parents);
